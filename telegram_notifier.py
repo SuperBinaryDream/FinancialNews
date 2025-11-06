@@ -1,7 +1,6 @@
 
 import requests
 import os
-from typing import str
 
 class TelegramNotifier:
     def __init__(self):
@@ -11,6 +10,8 @@ class TelegramNotifier:
 
     def send_message(self, message: str) -> bool:
         """Send message via Telegram"""
+        if not (self.bot_token and self.chat_id):
+            raise RuntimeError("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set")
         url = f"{self.base_url}/sendMessage"
         payload = {
             'chat_id': self.chat_id,
@@ -27,6 +28,8 @@ class TelegramNotifier:
 
     def send_document(self, file_path: str, caption: str = "") -> bool:
         """Send document via Telegram"""
+        if not (self.bot_token and self.chat_id):
+            raise RuntimeError("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set")
         url = f"{self.base_url}/sendDocument"
 
         try:

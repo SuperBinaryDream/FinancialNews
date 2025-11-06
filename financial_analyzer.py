@@ -12,6 +12,8 @@ class FinancialAnalyzer:
         self.fmp_key = os.getenv('FMP_API_KEY')
         self.marketaux_key = os.getenv('MARKETAUX_API_KEY')
 
+    
+
     def get_earnings_calendar(self, symbol: str) -> Dict[str, Any]:
         """Get upcoming earnings for a stock"""
         url = f"https://financialmodelingprep.com/api/v3/earning_calendar"
@@ -23,6 +25,8 @@ class FinancialAnalyzer:
 
         response = requests.get(url, params=params)
         data = response.json()
+        if not isinstance(data, list):
+            return None
 
         # Filter for specific symbol
         earnings = [item for item in data if item.get('symbol') == symbol]
@@ -34,7 +38,10 @@ class FinancialAnalyzer:
         params = {'apikey': self.fmp_key, 'limit': 10}
 
         response = requests.get(url, params=params)
-        return response.json()
+        data = response.json()
+        if not isinstance(data, list):
+            return []
+        return data
 
     def get_stock_news(self, symbol: str) -> List[Dict[str, Any]]:
         """Get recent news for a stock"""
@@ -48,7 +55,10 @@ class FinancialAnalyzer:
         }
 
         response = requests.get(url, params=params)
-        return response.json().get('data', [])
+        data = response.json()
+        if isinstance(data, dict):
+            return data.get('data', [])
+        return []
 
     def get_stock_price(self, symbol: str) -> Dict[str, Any]:
         """Get current stock price and basic info"""
@@ -60,7 +70,10 @@ class FinancialAnalyzer:
         }
 
         response = requests.get(url, params=params)
-        return response.json()
+        data = response.json()
+        if not isinstance(data, dict):
+            return {}
+        return data
 
     def analyze_stock(self, symbol: str) -> Dict[str, Any]:
         """Comprehensive analysis of a single stock"""
