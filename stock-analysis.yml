@@ -1,0 +1,59 @@
+name: Daily Stock Analysis
+on:
+  schedule:
+    # Run at 6:30 AM UTC (12:00 PM IST) on weekdays
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  stock-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pandas python-telegram-bot twilio
+
+    - name: Create config directories
+      run: |
+        mkdir -p config results
+
+    - name: Create watchlist config
+      run: |
+        cat > config/watchlist.json << EOF
+        {
+          "stocks": ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META"]
+        }
+        EOF
+
+    - name: Run stock analysis
+      env:
+        ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+        FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+        MARKETAUX_API_KEY: ${{ secrets.MARKETAUX_API_KEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        # TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+        # TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        # TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+        # YOUR_WHATSAPP_NUMBER: ${{ secrets.YOUR_WHATSAPP_NUMBER }}
+      run: python main_workflow.py
+
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: analysis-results
+        path: |
+          results/
+          stock_analysis.log
+        retention-days: 7

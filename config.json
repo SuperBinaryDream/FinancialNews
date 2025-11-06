@@ -1,0 +1,25 @@
+{
+  "watchlist": {
+    "us_stocks": ["AAPL", "MSFT", "GOOGL", "AMZN", "TSLA", "NVDA", "META", "NFLX"],
+    "indian_stocks": ["RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS"],
+    "etfs": ["SPY", "QQQ", "VTI"]
+  },
+  "analysis_settings": {
+    "earnings_days_ahead": 7,
+    "price_change_threshold": 5.0,
+    "news_lookback_days": 2,
+    "max_news_per_stock": 3
+  },
+  "notification_settings": {
+    "send_daily_summary": true,
+    "send_only_important_updates": false,
+    "include_price_charts": false,
+    "max_message_length": 4096
+  },
+  "schedule": {
+    "timezone": "Asia/Kolkata",
+    "notification_time": "12:30",
+    "skip_weekends": true,
+    "skip_holidays": true
+  }
+}
